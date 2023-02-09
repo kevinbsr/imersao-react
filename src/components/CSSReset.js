@@ -8,6 +8,8 @@ export const CSSReset = createGlobalStyle`
     box-sizing: border-box;
   }
   body {
+    background-color: ${({ theme }) => theme.backgroundBase};
+    color: ${({ theme }) => theme.textColorBase};
     font-family: sans-serif;
   }
   /* NextJS */

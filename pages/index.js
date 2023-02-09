@@ -1,26 +1,44 @@
 import React from 'react'
 import config from '../config.json'
 import styled from 'styled-components'
-import {CSSReset} from '../src/components/CSSReset'
 import Menu from '../src/components/Menu'
 import { StyledTimeline } from '../src/components/Timeline'
+import { videoService } from '../src/services/videoService'
+
+
 
 function HomePage() {
-  const estilosDaHomePage = { 
-    //backgroundColor: 'red' 
-  }
+  const service = videoService()
   const [valorDoFiltro, setValorDoFiltro] = React.useState("");
+  const [playlists, setPlaylists] = React.useState({ jogos: [] })
 
   // console.log(config.playlists)
 
+  React.useEffect(() => {
+    console.log("useEffect");
+    service
+      .getAllVideos()
+      .then((dados) => {
+        console.log(dados.data);
+        // Forma imutavel
+        const novasPlaylists = { ...playlists }
+        dados.data.forEach((video) => {
+          if (!novasPlaylists[video.playlist]) novasPlaylists[video.playlist] = [];
+          novasPlaylists[video.playlist].push(video);
+        })
+        setPlaylists(novasPlaylists);
+      })
+  }, [])
+
+
   return (
     <>
-      <CSSReset />
       <div style={{
         display: "flex",
         flexDirection: "column",
         flex: 1,
       }}>
+        {/* Prop Drilling */}
         <Menu valorDoFiltro={valorDoFiltro} setValorDoFiltro={setValorDoFiltro} />
         <Header />
         <Timeline searchValue={valorDoFiltro} playlists={config.playlists} />
@@ -36,6 +54,7 @@ export default HomePage
 } */
 
 const StyledHeader = styled.div`
+  background-color: ${({ theme }) => theme.backgroundLevel1};
   img {
     width: 80px;
     height: 80px;
